@@ -1,0 +1,63 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme - Light only -->
+    <style name="Theme.ClockApp" parent="Theme.Material3.Light.NoActionBar">
+        <!-- Primary colors -->
+        <item name="colorPrimary">#6750A4</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="colorPrimaryContainer">#EADDFF</item>
+        <item name="colorOnPrimaryContainer">#21005D</item>
+
+        <!-- Secondary colors -->
+        <item name="colorSecondary">#625B71</item>
+        <item name="colorOnSecondary">#FFFFFF</item>
+        <item name="colorSecondaryContainer">#E8DEF8</item>
+        <item name="colorOnSecondaryContainer">#1D192B</item>
+
+        <!-- Surface colors -->
+        <item name="colorSurface">#FFFFFF</item>
+        <item name="colorOnSurface">#1C1B1F</item>
+        <item name="colorSurfaceVariant">#F5F5F5</item>
+        <item name="colorOnSurfaceVariant">#49454F</item>
+
+        <!-- Background colors -->
+        <item name="android:colorBackground">#FFFFFF</item>
+        <item name="colorOnBackground">#1C1B1F</item>
+
+        <!-- Error colors -->
+        <item name="colorError">#B3261E</item>
+        <item name="colorOnError">#FFFFFF</item>
+
+        <!-- Outline -->
+        <item name="colorOutline">#79747E</item>
+
+        <!-- Status bar -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
+
+        <!-- Dialog style - rounded corners -->
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.ClockApp.MaterialAlertDialog</item>
+    </style>
+
+    <!-- Material Alert Dialog with rounded corners -->
+    <style name="ThemeOverlay.ClockApp.MaterialAlertDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="alertDialogStyle">@style/MaterialAlertDialog.ClockApp</item>
+    </style>
+
+    <style name="MaterialAlertDialog.ClockApp" parent="MaterialAlertDialog.Material3">
+        <item name="shapeAppearance">@style/ShapeAppearance.ClockApp.Dialog</item>
+        <item name="backgroundTint">#FFFFFF</item>
+    </style>
+
+    <style name="ShapeAppearance.ClockApp.Dialog" parent="ShapeAppearance.Material3.MediumComponent">
+        <item name="cornerSize">28dp</item>
+    </style>
+
+    <!-- Ringing screen theme - Full screen dark -->
+    <style name="Theme.ClockApp.Ring" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="android:windowBackground">@android:color/black</item>
+        <item name="android:statusBarColor">@android:color/black</item>
+        <item name="android:navigationBarColor">@android:color/black</item>
+        <item name="android:windowFullscreen">true</item>
+    </style>
+</resources>

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        app:elevation="0dp">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:title="闹钟"
+            app:titleTextAppearance="@style/TextAppearance.Material3.HeadlineMedium"
+            app:titleTextColor="#1C1B1F" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- 空状态视图 -->
+    <LinearLayout
+        android:id="@+id/emptyView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:padding="32dp">
+
+        <ImageView
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:src="@drawable/ic_alarm_off"
+            app:tint="#79747E"
+            android:alpha="0.5"
+            android:contentDescription="无闹钟" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="还没有闹钟"
+            android:textColor="#49454F"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="点击右下角按钮添加闹钟"
+            android:textColor="#79747E"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+
+    <!-- 闹钟列表 -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:padding="16dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+    <!-- 左下角菜单按钮 -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabMenu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|start"
+        android:layout_margin="24dp"
+        android:src="@drawable/ic_work"
+        app:backgroundTint="#EADDFF"
+        app:tint="#21005D"
+        app:elevation="6dp"
+        app:pressedTranslationZ="12dp"
+        android:contentDescription="菜单" />
+
+    <!-- 添加按钮 -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabAdd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="24dp"
+        android:src="@drawable/ic_add"
+        app:backgroundTint="#EADDFF"
+        app:tint="#21005D"
+        app:elevation="6dp"
+        app:pressedTranslationZ="12dp"
+        android:contentDescription="添加闹钟" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

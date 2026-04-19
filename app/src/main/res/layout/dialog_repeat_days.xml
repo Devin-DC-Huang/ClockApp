@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="选择重复日期"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="16dp" />
+
+    <CheckBox
+        android:id="@+id/cbFirstWorkdayOnly"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="假期后的第一个工作日"
+        android:textSize="16sp"
+        android:padding="12dp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#E0E0E0"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp" />
+
+    <LinearLayout
+        android:id="@+id/layoutDaySelection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <CheckBox
+            android:id="@+id/cbMonday"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="每周一"
+            android:textSize="16sp"
+            android:padding="12dp" />
+
+        <CheckBox
+            android:id="@+id/cbTuesday"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="每周二"
+            android:textSize="16sp"
+            android:padding="12dp" />
+
+        <CheckBox
+            android:id="@+id/cbWednesday"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="每周三"
+            android:textSize="16sp"
+            android:padding="12dp" />
+
+        <CheckBox
+            android:id="@+id/cbThursday"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="每周四"
+            android:textSize="16sp"
+            android:padding="12dp" />
+
+        <CheckBox
+            android:id="@+id/cbFriday"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="每周五"
+            android:textSize="16sp"
+            android:padding="12dp" />
+
+        <CheckBox
+            android:id="@+id/cbSaturday"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="每周六"
+            android:textSize="16sp"
+            android:padding="12dp" />
+
+        <CheckBox
+            android:id="@+id/cbSunday"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="每周日"
+            android:textSize="16sp"
+            android:padding="12dp" />
+    </LinearLayout>
+
+</LinearLayout>

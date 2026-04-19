@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/dialogContainer"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_rounded_dialog"
+    android:padding="16dp">
+
+    <!-- 标题栏 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <ImageButton
+            android:id="@+id/btnPrev"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_chevron_left"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="上一月" />
+
+        <TextView
+            android:id="@+id/tvMonth"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="2026年1月"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <ImageButton
+            android:id="@+id/btnNext"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_chevron_right"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="下一月" />
+
+    </LinearLayout>
+
+    <!-- 星期标题 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="16dp">
+
+        <TextView
+            android:text="日"
+            android:gravity="center"
+            android:padding="8dp"
+            android:textStyle="bold"
+            android:textColor="@android:color/holo_red_dark"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+        <TextView
+            android:text="一"
+            android:gravity="center"
+            android:padding="8dp"
+            android:textStyle="bold"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+        <TextView
+            android:text="二"
+            android:gravity="center"
+            android:padding="8dp"
+            android:textStyle="bold"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+        <TextView
+            android:text="三"
+            android:gravity="center"
+            android:padding="8dp"
+            android:textStyle="bold"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+        <TextView
+            android:text="四"
+            android:gravity="center"
+            android:padding="8dp"
+            android:textStyle="bold"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+        <TextView
+            android:text="五"
+            android:gravity="center"
+            android:padding="8dp"
+            android:textStyle="bold"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+        <TextView
+            android:text="六"
+            android:gravity="center"
+            android:padding="8dp"
+            android:textStyle="bold"
+            android:textColor="@android:color/holo_red_dark"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+
+    <!-- 日期网格 -->
+    <LinearLayout
+        android:id="@+id/gridDays"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="8dp" />
+
+    <!-- 图例 -->
+    <include
+        android:id="@+id/legendContainer"
+        layout="@layout/calendar_legend"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <!-- 底部按钮 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="16dp">
+
+        <Button
+            android:id="@+id/btnClear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="清空"
+            style="@style/Widget.MaterialComponents.Button.TextButton" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <Button
+            android:id="@+id/btnCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="取消"
+            style="@style/Widget.MaterialComponents.Button.TextButton" />
+
+        <Button
+            android:id="@+id/btnConfirm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="确定 (0)"
+            style="@style/Widget.MaterialComponents.Button.TextButton" />
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,38 @@
+# Gradle files
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Local configuration file
+local.properties
+
+# Android Studio / IntelliJ
+*.iml
+.idea/
+.idea/caches
+.idea/libraries
+.idea/modules.xml
+.idea/workspace.xml
+.idea/navEditor.xml
+.idea/assetWizardSettings.xml
+
+# macOS
+.DS_Store
+
+# Build outputs
+/captures
+.externalNativeBuild
+.cxx
+
+# Kotlin
+.kotlin/
+
+# App build outputs
+app/build/
+
+# Keystore files (do not commit!)
+*.jks
+*.keystore
+
+# Google Services (do not commit!)
+google-services.json

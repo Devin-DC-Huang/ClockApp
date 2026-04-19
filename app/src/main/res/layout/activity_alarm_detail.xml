@@ -1,0 +1,492 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FFFFFF">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="#FFFFFF"
+        app:titleTextColor="#1C1B1F" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Time selection -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:padding="16dp">
+
+                <EditText
+                    android:id="@+id/etHour"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="08"
+                    android:textSize="64sp"
+                    android:textStyle="normal"
+                    android:fontFamily="sans-serif-light"
+                    android:textColor="#1C1B1F"
+                    android:inputType="number"
+                    android:maxLength="2"
+                    android:background="@android:color/transparent"
+                    android:selectAllOnFocus="true" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=":" 
+                    android:textSize="64sp"
+                    android:textStyle="normal"
+                    android:fontFamily="sans-serif-light"
+                    android:textColor="#49454F" />
+
+                <EditText
+                    android:id="@+id/etMinute"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="00"
+                    android:textSize="64sp"
+                    android:textStyle="normal"
+                    android:fontFamily="sans-serif-light"
+                    android:textColor="#1C1B1F"
+                    android:inputType="number"
+                    android:maxLength="2"
+                    android:background="@android:color/transparent"
+                    android:selectAllOnFocus="true" />
+
+            </LinearLayout>
+
+            <!-- Title input -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:hint="闹钟名称"
+                app:startIconDrawable="@drawable/ic_label">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Date selection -->
+            <LinearLayout
+                android:id="@+id/layoutDates"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/layoutSelectDates"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:background="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:padding="12dp">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_calendar"
+                        app:tint="?attr/colorOutline" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginStart="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="选择日期"
+                            android:textSize="16sp"
+                            android:textColor="#1C1B1F" />
+
+                        <TextView
+                            android:id="@+id/tvDateCount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0 个日期"
+                            android:textSize="14sp"
+                            android:textColor="#49454F" />
+
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_chevron_right"
+                        app:tint="?attr/colorOutline" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- Repeat selection -->
+            <LinearLayout
+                android:id="@+id/layoutRepeatDays"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="12dp"
+                android:visibility="gone">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_calendar"
+                    app:tint="?attr/colorPrimary" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginStart="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="重复"
+                        android:textSize="16sp"
+                        android:textColor="#1C1B1F" />
+
+                    <TextView
+                        android:id="@+id/tvRepeatDays"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="永不"
+                        android:textSize="14sp"
+                        android:textColor="#49454F" />
+
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_chevron_right"
+                    app:tint="?attr/colorOutline" />
+
+            </LinearLayout>
+
+            <!-- Workday Mode Selection (only for workday alarm) -->
+            <LinearLayout
+                android:id="@+id/layoutWorkdayMode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:orientation="vertical"
+                android:background="@drawable/bg_rounded_dialog"
+                android:padding="16dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="响铃模式"
+                    android:textSize="16sp"
+                    android:textColor="#1C1B1F"
+                    android:layout_marginBottom="16dp" />
+
+                <!-- Workday mode option -->
+                <LinearLayout
+                    android:id="@+id/layoutWorkdayOption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="12dp"
+                    android:background="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="所有工作日"
+                            android:textSize="16sp"
+                            android:textColor="#1C1B1F" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="周一到周五，自动跳过法定节假日"
+                            android:textSize="14sp"
+                            android:textColor="#49454F" />
+
+                    </LinearLayout>
+
+                    <RadioButton
+                        android:id="@+id/rbWorkdayMode"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true" />
+
+                </LinearLayout>
+
+                <!-- First workday after holiday option -->
+                <LinearLayout
+                    android:id="@+id/layoutFirstWorkdayOption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="12dp"
+                    android:background="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="仅假期后第一个工作日"
+                            android:textSize="16sp"
+                            android:textColor="#1C1B1F" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="只在假期后的第一个工作日响铃"
+                            android:textSize="14sp"
+                            android:textColor="#49454F" />
+
+                    </LinearLayout>
+
+                    <RadioButton
+                        android:id="@+id/rbFirstWorkdayMode"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="false" />
+
+                </LinearLayout>
+
+                <!-- All holidays option (including weekends) -->
+                <LinearLayout
+                    android:id="@+id/layoutAllHolidaysOption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="12dp"
+                    android:background="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="所有节假日"
+                            android:textSize="16sp"
+                            android:textColor="#1C1B1F" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="包括法定节假日和周末"
+                            android:textSize="14sp"
+                            android:textColor="#49454F" />
+
+                    </LinearLayout>
+
+                    <RadioButton
+                        android:id="@+id/rbAllHolidaysMode"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="false" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- Workday calendar -->
+            <LinearLayout
+                android:id="@+id/layoutViewCalendar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="12dp"
+                android:visibility="gone">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_calendar"
+                    app:tint="?attr/colorPrimary" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginStart="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="查看节假日日历"
+                        android:textSize="16sp"
+                        android:textColor="#1C1B1F" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="查看法定节假日和补班日"
+                        android:textSize="14sp"
+                        android:textColor="#49454F" />
+
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_chevron_right"
+                    app:tint="?attr/colorOutline" />
+
+            </LinearLayout>
+
+            <!-- Settings card -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="1dp"
+                app:cardBackgroundColor="#F5F5F5"
+                app:strokeWidth="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <!-- Enable alarm -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="启用闹钟"
+                            android:textSize="16sp"
+                            android:textColor="#1C1B1F" />
+
+                        <com.google.android.material.materialswitch.MaterialSwitch
+                            android:id="@+id/switchEnabled"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:thumbTint="@drawable/switch_thumb_selector"
+                            app:trackTint="@drawable/switch_track_selector" />
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#E0E0E0" />
+
+                    <!-- Vibrate -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="振动"
+                            android:textSize="16sp"
+                            android:textColor="#1C1B1F" />
+
+                        <com.google.android.material.materialswitch.MaterialSwitch
+                            android:id="@+id/switchVibrate"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:thumbTint="@drawable/switch_thumb_selector"
+                            app:trackTint="@drawable/switch_track_selector" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Delete button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnDelete"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:text="删除闹钟"
+                android:textColor="#B3261E"
+                android:visibility="gone"
+                style="@style/Widget.Material3.Button.TextButton"
+                app:icon="@android:drawable/ic_menu_delete"
+                app:iconTint="#B3261E" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

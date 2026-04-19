@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="添加闹钟"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="16dp" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnSpecificDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="指定日期闹钟"
+        android:textAlignment="textStart"
+        android:padding="16dp"
+        app:icon="@drawable/ic_calendar"
+        app:iconTint="@color/purple_500"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="手动选择响铃日期"
+        android:textSize="12sp"
+        android:textColor="@android:color/darker_gray"
+        android:paddingStart="56dp"
+        android:paddingBottom="8dp" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnWorkday"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="特殊闹钟"
+        android:textAlignment="textStart"
+        android:padding="16dp"
+        app:icon="@drawable/ic_calendar_today"
+        app:iconTint="@color/green_500"
+        style="@style/Widget.MaterialComponents.Button.TextButton" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="自动跳过节假日和周末，支持假期后第一个工作日"
+        android:textSize="12sp"
+        android:textColor="@android:color/darker_gray"
+        android:paddingStart="56dp"
+        android:paddingBottom="8dp" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnRegular"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="普通闹钟"
+        android:textAlignment="textStart"
+        android:padding="16dp"
+        app:icon="@drawable/ic_alarm"
+        app:iconTint="@color/blue_500"
+        style="@style/Widget.MaterialComponents.Button.TextButton" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="按周重复，支持自定义重复日期"
+        android:textSize="12sp"
+        android:textColor="@android:color/darker_gray"
+        android:paddingStart="56dp" />
+
+</LinearLayout>

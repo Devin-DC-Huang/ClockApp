@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- 核心网络权限 -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <!-- 闹钟核心权限 -->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <!-- 通知与前台服务权限 -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+
+    <!-- 振动权限 -->
+    <uses-permission android:name="android.permission.VIBRATE" />
+
+    <!-- 锁屏显示权限（响铃界面需要） -->
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
+
+    <application
+        android:allowBackup="false"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.ClockApp"
+        android:name=".App">
+
+        <!-- 主界面 -->
+        <activity
+            android:name=".ui.main.MainActivity"
+            android:exported="true"
+            android:theme="@style/Theme.ClockApp">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- 闹钟详情页 -->
+        <activity
+            android:name=".ui.alarm.AlarmDetailActivity"
+            android:parentActivityName=".ui.main.MainActivity" />
+
+        <!-- 响铃界面 -->
+        <activity
+            android:name=".ui.ring.RingActivity"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTask"
+            android:showOnLockScreen="true"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true"
+            android:theme="@style/Theme.ClockApp.Ring"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.SHOW_ALARMS" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!-- 闹钟广播接收器 -->
+        <receiver
+            android:name=".receiver.AlarmReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.example.clockapp.ALARM_TRIGGER" />
+            </intent-filter>
+        </receiver>
+
+        <!-- 开机启动接收器 -->
+        <receiver
+            android:name=".receiver.BootReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+        <!-- 12月提醒接收器 -->
+        <receiver
+            android:name=".receiver.DecemberReminderReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.example.clockapp.DECEMBER_REMINDER" />
+            </intent-filter>
+        </receiver>
+
+        <!-- 闹钟响铃服务 -->
+        <service
+            android:name=".service.AlarmService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="specialUse"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+
+    </application>
+
+</manifest>

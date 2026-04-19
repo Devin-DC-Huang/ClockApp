@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Material Design 3 Primary Colors -->
+    <color name="md_theme_primary">#FF6750A4</color>
+    <color name="md_theme_onPrimary">#FFFFFFFF</color>
+    <color name="md_theme_primaryContainer">#FFEADDFF</color>
+    <color name="md_theme_onPrimaryContainer">#FF21005D</color>
+
+    <!-- Material Design 3 Secondary Colors -->
+    <color name="md_theme_secondary">#FF625B71</color>
+    <color name="md_theme_onSecondary">#FFFFFFFF</color>
+    <color name="md_theme_secondaryContainer">#FFE8DEF8</color>
+    <color name="md_theme_onSecondaryContainer">#FF1D192B</color>
+
+    <!-- Material Design 3 Tertiary Colors -->
+    <color name="md_theme_tertiary">#FF7D5260</color>
+    <color name="md_theme_onTertiary">#FFFFFFFF</color>
+    <color name="md_theme_tertiaryContainer">#FFFFD8E4</color>
+    <color name="md_theme_onTertiaryContainer">#FF31111D</color>
+
+    <!-- Surface Colors -->
+    <color name="md_theme_surface">#FFFFFBFE</color>
+    <color name="md_theme_onSurface">#FF1C1B1F</color>
+    <color name="md_theme_surfaceVariant">#FFE7E0EC</color>
+    <color name="md_theme_onSurfaceVariant">#FF49454F</color>
+    <color name="md_theme_surfaceTint">#FF6750A4</color>
+
+    <!-- Background Colors -->
+    <color name="md_theme_background">#FFFFFBFE</color>
+    <color name="md_theme_onBackground">#FF1C1B1F</color>
+
+    <!-- Error Colors -->
+    <color name="md_theme_error">#FFB3261E</color>
+    <color name="md_theme_onError">#FFFFFFFF</color>
+    <color name="md_theme_errorContainer">#FFF9DEDC</color>
+    <color name="md_theme_onErrorContainer">#FF410E0B</color>
+
+    <!-- Outline -->
+    <color name="md_theme_outline">#FF79747E</color>
+    <color name="md_theme_outlineVariant">#FFCAC4D0</color>
+
+    <!-- Inverse Colors -->
+    <color name="md_theme_inverseSurface">#FF313033</color>
+    <color name="md_theme_inverseOnSurface">#FFF4EFF4</color>
+    <color name="md_theme_inversePrimary">#FFD0BCFF</color>
+
+    <!-- Custom Accent Colors -->
+    <color name="accent_blue">#FF4A90D9</color>
+    <color name="accent_green">#FF4CAF50</color>
+    <color name="accent_orange">#FFFF9800</color>
+    <color name="accent_pink">#FFE91E63</color>
+
+    <!-- Legacy colors for compatibility -->
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6750A4</color>
+    <color name="purple_700">#FF6750A4</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="green_500">#4CAF50</color>
+    <color name="blue_500">#4A90D9</color>
+</resources>

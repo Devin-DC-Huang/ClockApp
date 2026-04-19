@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    android:orientation="vertical"
+    android:padding="32dp">
+
+    <!-- 动态响铃图标容器 -->
+    <FrameLayout
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="24dp">
+
+        <!-- 外圈波纹动画 -->
+        <View
+            android:id="@+id/ripple1"
+            android:layout_width="180dp"
+            android:layout_height="180dp"
+            android:background="@drawable/bg_ring_ripple"
+            android:layout_gravity="center" />
+
+        <View
+            android:id="@+id/ripple2"
+            android:layout_width="140dp"
+            android:layout_height="140dp"
+            android:background="@drawable/bg_ring_ripple"
+            android:layout_gravity="center" />
+
+        <View
+            android:id="@+id/ripple3"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:background="@drawable/bg_ring_ripple"
+            android:layout_gravity="center" />
+
+        <!-- 中心圆形背景 -->
+        <View
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:background="@drawable/bg_ring_circle"
+            android:layout_gravity="center" />
+
+        <!-- 响铃图标 -->
+        <ImageView
+            android:id="@+id/ivAlarmIcon"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:src="@drawable/ic_alarm_ring"
+            android:layout_gravity="center"
+            android:contentDescription="响铃图标" />
+
+    </FrameLayout>
+
+    <!-- 当前时间 -->
+    <TextView
+        android:id="@+id/tvTime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        android:gravity="center"
+        android:text="08:00"
+        android:textColor="#FFFFFF"
+        android:textSize="80sp"
+        android:textStyle="bold"
+        android:fontFamily="sans-serif-light" />
+
+    <!-- 闹钟标题 -->
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="8dp"
+        android:text="闹钟"
+        android:textColor="#B3FFFFFF"
+        android:textSize="20sp"
+        android:letterSpacing="0.1" />
+
+    <!-- 日期显示 -->
+    <TextView
+        android:id="@+id/tvDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="4dp"
+        android:text="1月1日 星期一"
+        android:textColor="#80FFFFFF"
+        android:textSize="16sp" />
+
+    <!-- 按钮容器 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="bottom"
+        android:layout_marginTop="64dp"
+        android:layout_marginBottom="32dp">
+
+        <!-- 停止按钮 -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnStop"
+            android:layout_width="match_parent"
+            android:layout_height="72dp"
+            android:text="停止闹钟"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:cornerRadius="36dp"
+            app:backgroundTint="#F44336"
+            app:elevation="8dp"
+            app:rippleColor="#80FFFFFF" />
+
+        <!-- 贪睡按钮 -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSnooze"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:layout_marginTop="16dp"
+            android:text="贪睡 5 分钟"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            app:cornerRadius="32dp"
+            app:backgroundTint="#26FFFFFF"
+            app:strokeColor="#40FFFFFF"
+            app:strokeWidth="1dp"
+            app:rippleColor="#40FFFFFF" />
+
+    </LinearLayout>
+
+</LinearLayout>
