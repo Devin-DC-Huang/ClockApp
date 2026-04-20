@@ -46,7 +46,7 @@ object AlarmScheduler {
         }
 
         // Get calendar data for holiday checking if needed (for special alarm with first workday mode or all holidays mode)
-        val calendarData = if (alarm.isWorkdayAlarm && alarm.specialAlarmMode != SpecialAlarmMode.ALL_WORKDAYS) {
+        val calendarData = if (alarm.isSpecialAlarm && alarm.specialAlarmMode != SpecialAlarmMode.ALL_WORKDAYS) {
             val year = LocalDate.now().year
             CalendarRepository.getInstance(context).getCalendarDataSync(year)
         } else {

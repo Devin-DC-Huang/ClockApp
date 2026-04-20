@@ -200,9 +200,9 @@
 
             </LinearLayout>
 
-            <!-- Workday Mode Selection (only for workday alarm) -->
+            <!-- Special Alarm Mode Selection (only for special alarm) -->
             <LinearLayout
-                android:id="@+id/layoutWorkdayMode"
+                android:id="@+id/layoutSpecialAlarmMode"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
@@ -219,9 +219,9 @@
                     android:textColor="#1C1B1F"
                     android:layout_marginBottom="16dp" />
 
-                <!-- Workday mode option -->
+                <!-- All workdays mode option -->
                 <LinearLayout
-                    android:id="@+id/layoutWorkdayOption"
+                    android:id="@+id/layoutAllWorkdaysOption"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
@@ -254,7 +254,7 @@
                     </LinearLayout>
 
                     <RadioButton
-                        android:id="@+id/rbWorkdayMode"
+                        android:id="@+id/rbAllWorkdaysMode"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:checked="true" />

@@ -35,9 +35,9 @@ data class Alarm(
     var ringtone: String = "default",
     var vibrate: Boolean = true,
     val createdAt: Instant = Instant.now(),  // java.time.Instant
-    var isWorkdayAlarm: Boolean = false,  // true=workday alarm(auto fetch dates), false=manual date selection
+    var isSpecialAlarm: Boolean = false,  // true=special alarm(auto fetch dates), false=manual date selection
     var isRegularAlarm: Boolean = false,  // true=regular alarm(weekly repeat), false=other types
-    var year: Int? = null,  // Year for workday alarm
+    var year: Int? = null,  // Year for special alarm
     var snoozeEnabled: Boolean = true,  // Enable snooze function
     var snoozeMinutes: Int = 5,  // Snooze interval in minutes (default 5 min)
     var repeatDays: List<Int> = emptyList(),  // Weekly repeat days: 1=Monday, 2=Tuesday, ..., 7=Sunday
@@ -57,7 +57,7 @@ data class Alarm(
      */
     fun getTypeDescription(): String {
         return when {
-            isWorkdayAlarm -> year?.let { "Workday Alarm (${it})" } ?: "Workday Alarm"
+            isSpecialAlarm -> year?.let { "Special Alarm (${it})" } ?: "Special Alarm"
             isRegularAlarm -> if (repeatDays.isEmpty()) "One-time Alarm" else "Weekly Repeat (${getRepeatDaysText()})"
             else -> if (dates.isEmpty()) "Specific Date" else "${dates.size} dates specified"
         }
@@ -136,11 +136,11 @@ data class Alarm(
         val today = now.toLocalDate()
         val currentDayOfWeek = today.dayOfWeek.value  // 1=Monday, 7=Sunday
 
-        // Special alarm (workday alarm): supports three modes
+        // Special alarm: supports three modes
         // ALL_WORKDAYS: All workdays (Mon-Fri, skip holidays) - default
         // FIRST_WORKDAY_ONLY: First workday after holiday only (including weekends)
         // ALL_HOLIDAYS: All holidays (including weekends)
-        if (isWorkdayAlarm) {
+        if (isSpecialAlarm) {
             val currentHour = now.hour
             val currentMinute = now.minute
 

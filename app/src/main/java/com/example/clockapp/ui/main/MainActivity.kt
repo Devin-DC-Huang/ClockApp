@@ -78,7 +78,7 @@ class MainActivity : AppCompatActivity() {
             // 标记该阶段提醒已显示
             CalendarRepository.getInstance(this).markDecemberReminderShown()
             // 打开新建指定日期闹钟页面
-            createAlarm(isWorkdayAlarm = false)
+            createAlarm(isSpecialAlarm = false)
         }
     }
 
@@ -137,7 +137,7 @@ class MainActivity : AppCompatActivity() {
                 // 标记已显示
                 repository.markDecemberReminderShown()
                 // 打开新建指定日期闹钟页面
-                createAlarm(isWorkdayAlarm = false)
+                createAlarm(isSpecialAlarm = false)
             }
             .setNegativeButton("稍后提醒") { _, _ ->
                 // 不标记，下次还会继续提示
@@ -405,12 +405,12 @@ class MainActivity : AppCompatActivity() {
 
         view.findViewById<MaterialButton>(R.id.btnSpecificDate).setOnClickListener {
             bottomSheet.dismiss()
-            createAlarm(isWorkdayAlarm = false)
+            createAlarm(isSpecialAlarm = false)
         }
 
         view.findViewById<MaterialButton>(R.id.btnWorkday).setOnClickListener {
             bottomSheet.dismiss()
-            createAlarm(isWorkdayAlarm = true)
+            createAlarm(isSpecialAlarm = true)
         }
 
         view.findViewById<MaterialButton>(R.id.btnRegular).setOnClickListener {
@@ -425,9 +425,9 @@ class MainActivity : AppCompatActivity() {
     /**
      * Create new alarm
      */
-    private fun createAlarm(isWorkdayAlarm: Boolean) {
+    private fun createAlarm(isSpecialAlarm: Boolean) {
         val intent = Intent(this, AlarmDetailActivity::class.java).apply {
-            putExtra(AlarmDetailActivity.EXTRA_IS_WORKDAY_ALARM, isWorkdayAlarm)
+            putExtra(AlarmDetailActivity.EXTRA_IS_SPECIAL_ALARM, isSpecialAlarm)
         }
         startActivity(intent)
     }

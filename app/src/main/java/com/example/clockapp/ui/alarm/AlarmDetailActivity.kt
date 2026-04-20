@@ -42,17 +42,17 @@ class AlarmDetailActivity : AppCompatActivity() {
     private lateinit var switchEnabled: SwitchCompat
     private lateinit var switchVibrate: SwitchCompat
     
-    // Workday mode selection
-    private lateinit var layoutWorkdayMode: LinearLayout
-    private lateinit var layoutWorkdayOption: LinearLayout
+    // Special alarm mode selection
+    private lateinit var layoutSpecialAlarmMode: LinearLayout
+    private lateinit var layoutAllWorkdaysOption: LinearLayout
     private lateinit var layoutFirstWorkdayOption: LinearLayout
     private lateinit var layoutAllHolidaysOption: LinearLayout
-    private lateinit var rbWorkdayMode: android.widget.RadioButton
+    private lateinit var rbAllWorkdaysMode: android.widget.RadioButton
     private lateinit var rbFirstWorkdayMode: android.widget.RadioButton
     private lateinit var rbAllHolidaysMode: android.widget.RadioButton
 
     private var alarmId: String? = null
-    private var isWorkdayAlarm: Boolean = false
+    private var isSpecialAlarm: Boolean = false
     private var isRegularAlarm: Boolean = false
     private var selectedDates: MutableList<LocalDate> = mutableListOf()
     private var repeatDays: MutableList<Int> = mutableListOf()
@@ -67,7 +67,7 @@ class AlarmDetailActivity : AppCompatActivity() {
 
         // Get parameters
         alarmId = intent.getStringExtra(EXTRA_ALARM_ID)
-        isWorkdayAlarm = intent.getBooleanExtra(EXTRA_IS_WORKDAY_ALARM, false)
+        isSpecialAlarm = intent.getBooleanExtra(EXTRA_IS_SPECIAL_ALARM, false)
         isRegularAlarm = intent.getBooleanExtra(EXTRA_IS_REGULAR_ALARM, false)
 
         initViews()
@@ -86,7 +86,7 @@ class AlarmDetailActivity : AppCompatActivity() {
      */
     private fun getDefaultAlarmTitle(): String {
         return when {
-            isWorkdayAlarm -> getSpecialAlarmModeTitle()
+            isSpecialAlarm -> getSpecialAlarmModeTitle()
             isRegularAlarm -> getString(R.string.alarm_type_regular)
             else -> getString(R.string.alarm_type_specific)
         }
@@ -124,7 +124,7 @@ class AlarmDetailActivity : AppCompatActivity() {
      * Update default title if user hasn't edited it
      */
     private fun updateDefaultTitleIfNeeded() {
-        if (isWorkdayAlarm && !isUserEditedTitle()) {
+        if (isSpecialAlarm && !isUserEditedTitle()) {
             etTitle.setText(getSpecialAlarmModeTitle())
         }
     }
@@ -142,12 +142,12 @@ class AlarmDetailActivity : AppCompatActivity() {
         switchEnabled = findViewById(R.id.switchEnabled)
         switchVibrate = findViewById(R.id.switchVibrate)
         
-        // Workday mode selection
-        layoutWorkdayMode = findViewById(R.id.layoutWorkdayMode)
-        layoutWorkdayOption = findViewById(R.id.layoutWorkdayOption)
+        // Special alarm mode selection
+        layoutSpecialAlarmMode = findViewById(R.id.layoutSpecialAlarmMode)
+        layoutAllWorkdaysOption = findViewById(R.id.layoutAllWorkdaysOption)
         layoutFirstWorkdayOption = findViewById(R.id.layoutFirstWorkdayOption)
         layoutAllHolidaysOption = findViewById(R.id.layoutAllHolidaysOption)
-        rbWorkdayMode = findViewById(R.id.rbWorkdayMode)
+        rbAllWorkdaysMode = findViewById(R.id.rbAllWorkdaysMode)
         rbFirstWorkdayMode = findViewById(R.id.rbFirstWorkdayMode)
         rbAllHolidaysMode = findViewById(R.id.rbAllHolidaysMode)
 
@@ -166,17 +166,17 @@ class AlarmDetailActivity : AppCompatActivity() {
 
         // Date selection
         findViewById<LinearLayout>(R.id.layoutSelectDates).setOnClickListener {
-            if (!isWorkdayAlarm) {
+            if (!isSpecialAlarm) {
                 showDatePicker()
             }
         }
 
         // Hide date selection for workday alarms and regular alarms
-        if (isWorkdayAlarm) {
+        if (isSpecialAlarm) {
             layoutDates.visibility = LinearLayout.GONE
             layoutRepeatDays.visibility = LinearLayout.GONE
-            // Setup workday mode selection
-            setupWorkdayModeSelection()
+            // Setup Special alarm mode selection
+            setupSpecialAlarmModeSelection()
             // Calendar view button is only shown when editing existing alarm
             layoutViewCalendar.visibility = if (alarmId != null) LinearLayout.VISIBLE else LinearLayout.GONE
         } else if (isRegularAlarm) {
@@ -184,7 +184,7 @@ class AlarmDetailActivity : AppCompatActivity() {
             layoutDates.visibility = LinearLayout.GONE
             layoutViewCalendar.visibility = LinearLayout.GONE
             layoutRepeatDays.visibility = LinearLayout.VISIBLE
-            layoutWorkdayMode.visibility = LinearLayout.GONE
+            layoutSpecialAlarmMode.visibility = LinearLayout.GONE
             layoutRepeatDays.setOnClickListener {
                 showRepeatDaysPicker()
             }
@@ -195,45 +195,45 @@ class AlarmDetailActivity : AppCompatActivity() {
     }
     
     /**
-     * Setup workday mode selection
+     * Setup Special alarm mode selection
      * In create mode: show three selectable options
      * In edit mode: show only current mode as read-only text
      */
-    private fun setupWorkdayModeSelection() {
+    private fun setupSpecialAlarmModeSelection() {
         // Mode selection is only enabled in create mode (alarmId == null)
         val isCreateMode = alarmId == null
 
         if (isCreateMode) {
             // Create mode: show mode selection layout
-            layoutWorkdayMode.visibility = LinearLayout.VISIBLE
-            updateWorkdayModeSelection()
+            layoutSpecialAlarmMode.visibility = LinearLayout.VISIBLE
+            updateSpecialAlarmModeSelection()
 
             // Workday option click (ALL_WORKDAYS: All workdays)
-            layoutWorkdayOption.setOnClickListener {
+            layoutAllWorkdaysOption.setOnClickListener {
                 specialAlarmMode = SpecialAlarmMode.ALL_WORKDAYS
-                updateWorkdayModeSelection()
+                updateSpecialAlarmModeSelection()
                 updateDefaultTitleIfNeeded()
             }
 
             // First workday option click (FIRST_WORKDAY_ONLY)
             layoutFirstWorkdayOption.setOnClickListener {
                 specialAlarmMode = SpecialAlarmMode.FIRST_WORKDAY_ONLY
-                updateWorkdayModeSelection()
+                updateSpecialAlarmModeSelection()
                 updateDefaultTitleIfNeeded()
             }
 
             // All holidays option click (ALL_HOLIDAYS)
             layoutAllHolidaysOption.setOnClickListener {
                 specialAlarmMode = SpecialAlarmMode.ALL_HOLIDAYS
-                updateWorkdayModeSelection()
+                updateSpecialAlarmModeSelection()
                 updateDefaultTitleIfNeeded()
             }
 
             // Radio button change listeners
-            rbWorkdayMode.setOnCheckedChangeListener { _, isChecked ->
+            rbAllWorkdaysMode.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) {
                     specialAlarmMode = SpecialAlarmMode.ALL_WORKDAYS
-                    updateWorkdayModeSelection()
+                    updateSpecialAlarmModeSelection()
                     updateDefaultTitleIfNeeded()
                 }
             }
@@ -241,7 +241,7 @@ class AlarmDetailActivity : AppCompatActivity() {
             rbFirstWorkdayMode.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) {
                     specialAlarmMode = SpecialAlarmMode.FIRST_WORKDAY_ONLY
-                    updateWorkdayModeSelection()
+                    updateSpecialAlarmModeSelection()
                     updateDefaultTitleIfNeeded()
                 }
             }
@@ -249,13 +249,13 @@ class AlarmDetailActivity : AppCompatActivity() {
             rbAllHolidaysMode.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) {
                     specialAlarmMode = SpecialAlarmMode.ALL_HOLIDAYS
-                    updateWorkdayModeSelection()
+                    updateSpecialAlarmModeSelection()
                     updateDefaultTitleIfNeeded()
                 }
             }
         } else {
             // Edit mode: show only the selected mode (not all three options)
-            layoutWorkdayMode.visibility = LinearLayout.VISIBLE
+            layoutSpecialAlarmMode.visibility = LinearLayout.VISIBLE
             showSelectedModeOnly()
         }
     }
@@ -265,7 +265,7 @@ class AlarmDetailActivity : AppCompatActivity() {
      */
     private fun showSelectedModeOnly() {
         // Hide all radio buttons
-        rbWorkdayMode.visibility = View.GONE
+        rbAllWorkdaysMode.visibility = View.GONE
         rbFirstWorkdayMode.visibility = View.GONE
         rbAllHolidaysMode.visibility = View.GONE
 
@@ -274,17 +274,17 @@ class AlarmDetailActivity : AppCompatActivity() {
             SpecialAlarmMode.ALL_WORKDAYS -> {
                 layoutFirstWorkdayOption.visibility = View.GONE
                 layoutAllHolidaysOption.visibility = View.GONE
-                layoutWorkdayOption.visibility = View.VISIBLE
-                layoutWorkdayOption.isClickable = false
+                layoutAllWorkdaysOption.visibility = View.VISIBLE
+                layoutAllWorkdaysOption.isClickable = false
             }
             SpecialAlarmMode.FIRST_WORKDAY_ONLY -> {
-                layoutWorkdayOption.visibility = View.GONE
+                layoutAllWorkdaysOption.visibility = View.GONE
                 layoutAllHolidaysOption.visibility = View.GONE
                 layoutFirstWorkdayOption.visibility = View.VISIBLE
                 layoutFirstWorkdayOption.isClickable = false
             }
             SpecialAlarmMode.ALL_HOLIDAYS -> {
-                layoutWorkdayOption.visibility = View.GONE
+                layoutAllWorkdaysOption.visibility = View.GONE
                 layoutFirstWorkdayOption.visibility = View.GONE
                 layoutAllHolidaysOption.visibility = View.VISIBLE
                 layoutAllHolidaysOption.isClickable = false
@@ -295,8 +295,8 @@ class AlarmDetailActivity : AppCompatActivity() {
     /**
      * Update radio button states based on current mode
      */
-    private fun updateWorkdayModeSelection() {
-        rbWorkdayMode.isChecked = specialAlarmMode == SpecialAlarmMode.ALL_WORKDAYS
+    private fun updateSpecialAlarmModeSelection() {
+        rbAllWorkdaysMode.isChecked = specialAlarmMode == SpecialAlarmMode.ALL_WORKDAYS
         rbFirstWorkdayMode.isChecked = specialAlarmMode == SpecialAlarmMode.FIRST_WORKDAY_ONLY
         rbAllHolidaysMode.isChecked = specialAlarmMode == SpecialAlarmMode.ALL_HOLIDAYS
     }
@@ -332,7 +332,7 @@ class AlarmDetailActivity : AppCompatActivity() {
             // Regular alarm: show day selection, hide "first workday only"
             cbFirstWorkdayOnly.visibility = View.GONE
             layoutDaySelection.visibility = View.VISIBLE
-        } else if (isWorkdayAlarm) {
+        } else if (isSpecialAlarm) {
             // Special alarm: only show "first workday only" option, hide day selection
             // Special alarm has two modes:
             // 1. First workday after holiday only (checked)
@@ -366,9 +366,9 @@ class AlarmDetailActivity : AppCompatActivity() {
     private fun updateRepeatDaysDisplay() {
         tvRepeatDays.text = when {
             // Special alarm modes
-            isWorkdayAlarm && specialAlarmMode == SpecialAlarmMode.ALL_HOLIDAYS -> "所有节假日（包括周末）"
-            isWorkdayAlarm && specialAlarmMode == SpecialAlarmMode.FIRST_WORKDAY_ONLY -> getString(R.string.first_workday_after_holiday_only)
-            isWorkdayAlarm -> "所有工作日（跳过节假日）"
+            isSpecialAlarm && specialAlarmMode == SpecialAlarmMode.ALL_HOLIDAYS -> "所有节假日（包括周末）"
+            isSpecialAlarm && specialAlarmMode == SpecialAlarmMode.FIRST_WORKDAY_ONLY -> getString(R.string.first_workday_after_holiday_only)
+            isSpecialAlarm -> "所有工作日（跳过节假日）"
             // Regular alarm: only never or custom days
             repeatDays.isEmpty() -> getString(R.string.repeat_never)
             else -> {
@@ -472,7 +472,7 @@ class AlarmDetailActivity : AppCompatActivity() {
             getString(R.string.title_edit_alarm)
         } else {
             when {
-                isWorkdayAlarm -> getString(R.string.title_new_workday_alarm)
+                isSpecialAlarm -> getString(R.string.title_new_workday_alarm)
                 isRegularAlarm -> getString(R.string.title_new_regular_alarm)
                 else -> getString(R.string.title_new_specific_alarm)
             }
@@ -491,7 +491,7 @@ class AlarmDetailActivity : AppCompatActivity() {
 
             alarm?.let {
                 existingAlarm = it
-                isWorkdayAlarm = it.isWorkdayAlarm
+                isSpecialAlarm = it.isSpecialAlarm
                 isRegularAlarm = it.isRegularAlarm
                 setHour(it.hour)
                 setMinute(it.minute)
@@ -507,7 +507,7 @@ class AlarmDetailActivity : AppCompatActivity() {
                 updateRepeatDaysDisplay()
 
                 when {
-                    isWorkdayAlarm -> {
+                    isSpecialAlarm -> {
                         layoutDates.visibility = LinearLayout.GONE
                         // Show calendar view button for workday alarm when editing
                         layoutViewCalendar.visibility = LinearLayout.VISIBLE
@@ -515,14 +515,14 @@ class AlarmDetailActivity : AppCompatActivity() {
                             showHolidayCalendar()
                         }
                         // Setup workday mode display (read-only in edit mode)
-                        setupWorkdayModeSelection()
+                        setupSpecialAlarmModeSelection()
                     }
                     isRegularAlarm -> {
                         // Regular alarm: hide date selection, show repeat days
                         layoutDates.visibility = LinearLayout.GONE
                         layoutViewCalendar.visibility = LinearLayout.GONE
                         layoutRepeatDays.visibility = LinearLayout.VISIBLE
-                        layoutWorkdayMode.visibility = LinearLayout.GONE
+                        layoutSpecialAlarmMode.visibility = LinearLayout.GONE
                         layoutRepeatDays.setOnClickListener {
                             showRepeatDaysPicker()
                         }
@@ -591,7 +591,7 @@ class AlarmDetailActivity : AppCompatActivity() {
         lifecycleScope.launch {
             try {
                 val dates = when {
-                    isWorkdayAlarm -> {
+                    isSpecialAlarm -> {
                         // Workday alarm: get workday dates
                         loadWorkdayDates()
                     }
@@ -628,9 +628,9 @@ class AlarmDetailActivity : AppCompatActivity() {
                     dates = dates,
                     isEnabled = isEnabled,
                     vibrate = switchVibrate.isChecked,
-                    isWorkdayAlarm = isWorkdayAlarm,
+                    isSpecialAlarm = isSpecialAlarm,
                     isRegularAlarm = isRegularAlarm,
-                    year = if (isWorkdayAlarm) LocalDate.now().year else null,
+                    year = if (isSpecialAlarm) LocalDate.now().year else null,
                     snoozeEnabled = existingAlarm?.snoozeEnabled ?: true,
                     snoozeMinutes = existingAlarm?.snoozeMinutes ?: 5,
                     repeatDays = repeatDays.toList(),
@@ -797,7 +797,7 @@ class AlarmDetailActivity : AppCompatActivity() {
     companion object {
         private const val TAG = "AlarmDetailActivity"
         const val EXTRA_ALARM_ID = "alarm_id"
-        const val EXTRA_IS_WORKDAY_ALARM = "is_workday_alarm"
+        const val EXTRA_IS_SPECIAL_ALARM = "is_special_alarm"
         const val EXTRA_IS_REGULAR_ALARM = "is_regular_alarm"
     }
 }

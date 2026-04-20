@@ -24,7 +24,7 @@ class AlarmTest {
     @Test
     fun `getTypeDescription returns correct description for workday alarm`() {
         val alarm = Alarm(
-            isWorkdayAlarm = true,
+            isSpecialAlarm = true,
             year = 2024
         )
         assertEquals("Workday Alarm (2024)", alarm.getTypeDescription())
@@ -364,7 +364,7 @@ class AlarmTest {
             hour = 8,
             minute = 0,
             dates = emptyList(),
-            isWorkdayAlarm = false,
+            isSpecialAlarm = false,
             isRegularAlarm = false
         )
 
@@ -437,7 +437,7 @@ class AlarmTest {
     @Test
     fun `getTypeDescription for workday alarm without year`() {
         val alarm = Alarm(
-            isWorkdayAlarm = true,
+            isSpecialAlarm = true,
             year = null
         )
         assertEquals("Workday Alarm", alarm.getTypeDescription())
@@ -492,7 +492,7 @@ class AlarmTest {
             hour = 8,
             minute = 0,
             dates = emptyList(),
-            isWorkdayAlarm = false,
+            isSpecialAlarm = false,
             isRegularAlarm = false
         )
 
@@ -553,7 +553,7 @@ class AlarmTest {
         assertTrue(alarm.isEnabled)
         assertEquals("default", alarm.ringtone)
         assertTrue(alarm.vibrate)
-        assertFalse(alarm.isWorkdayAlarm)
+        assertFalse(alarm.isSpecialAlarm)
         assertFalse(alarm.isRegularAlarm)
         assertNull(alarm.year)
         assertTrue(alarm.snoozeEnabled)
@@ -773,7 +773,7 @@ class AlarmTest {
             isEnabled = true,
             hour = 8,
             minute = 0,
-            isWorkdayAlarm = true,
+            isSpecialAlarm = true,
             year = null,
             dates = emptyList()
         )
@@ -958,7 +958,7 @@ class AlarmTest {
                 isEnabled = true,
                 hour = 8,
                 minute = 0,
-                isWorkdayAlarm = true,
+                isSpecialAlarm = true,
                 specialAlarmMode = SpecialAlarmMode.ALL_WORKDAYS
             )
             
@@ -978,7 +978,7 @@ class AlarmTest {
             isEnabled = true,
             hour = 8,
             minute = 0,
-            isWorkdayAlarm = true,
+            isSpecialAlarm = true,
             specialAlarmMode = SpecialAlarmMode.FIRST_WORKDAY_ONLY
         )
         
@@ -993,7 +993,7 @@ class AlarmTest {
             isEnabled = true,
             hour = 8,
             minute = 0,
-            isWorkdayAlarm = true,
+            isSpecialAlarm = true,
             specialAlarmMode = SpecialAlarmMode.ALL_HOLIDAYS
         )
         
@@ -1012,7 +1012,7 @@ class AlarmTest {
             hour = 8,
             minute = 30,
             isEnabled = true,
-            isWorkdayAlarm = true,
+            isSpecialAlarm = true,
             year = 2024
         )
 
@@ -1031,7 +1031,7 @@ class AlarmTest {
         // Other properties should be same
         assertEquals(original.hour, copy.hour)
         assertEquals(original.minute, copy.minute)
-        assertEquals(original.isWorkdayAlarm, copy.isWorkdayAlarm)
+        assertEquals(original.isSpecialAlarm, copy.isSpecialAlarm)
         assertEquals(original.year, copy.year)
     }
 
@@ -1046,7 +1046,7 @@ class AlarmTest {
             dates = listOf(tomorrow),
             isEnabled = true,
             vibrate = false,
-            isWorkdayAlarm = false,
+            isSpecialAlarm = false,
             isRegularAlarm = true,
             year = null,
             snoozeEnabled = false,
@@ -1065,7 +1065,7 @@ class AlarmTest {
         assertEquals(original.minute, copy.minute)
         assertEquals(original.dates, copy.dates)
         assertEquals(original.vibrate, copy.vibrate)
-        assertEquals(original.isWorkdayAlarm, copy.isWorkdayAlarm)
+        assertEquals(original.isSpecialAlarm, copy.isSpecialAlarm)
         assertEquals(original.isRegularAlarm, copy.isRegularAlarm)
         assertEquals(original.year, copy.year)
         assertEquals(original.snoozeEnabled, copy.snoozeEnabled)
@@ -1118,7 +1118,7 @@ class AlarmTest {
             title = "Workday Alarm",
             hour = 9,
             minute = 0,
-            isWorkdayAlarm = true,
+            isSpecialAlarm = true,
             specialAlarmMode = SpecialAlarmMode.FIRST_WORKDAY_ONLY
         )
 
@@ -1129,7 +1129,7 @@ class AlarmTest {
         )
 
         assertEquals(original.specialAlarmMode, copy.specialAlarmMode)
-        assertEquals(original.isWorkdayAlarm, copy.isWorkdayAlarm)
+        assertEquals(original.isSpecialAlarm, copy.isSpecialAlarm)
     }
 
     @Test
@@ -1172,7 +1172,7 @@ class AlarmTest {
             isEnabled = true,
             hour = 8,
             minute = 0,
-            isWorkdayAlarm = true,
+            isSpecialAlarm = true,
             specialAlarmMode = SpecialAlarmMode.ALL_HOLIDAYS
         )
         
@@ -1197,7 +1197,7 @@ class AlarmTest {
             isEnabled = true,
             hour = 8,
             minute = 0,
-            isWorkdayAlarm = true,
+            isSpecialAlarm = true,
             specialAlarmMode = SpecialAlarmMode.FIRST_WORKDAY_ONLY
         )
         
@@ -1213,19 +1213,19 @@ class AlarmTest {
     fun `workday alarm modes are mutually exclusive via enum`() {
         // Test that enum ensures only one mode is active at a time
         val alarm1 = Alarm(
-            isWorkdayAlarm = true,
+            isSpecialAlarm = true,
             specialAlarmMode = SpecialAlarmMode.ALL_WORKDAYS
         )
         assertEquals(SpecialAlarmMode.ALL_WORKDAYS, alarm1.specialAlarmMode)
 
         val alarm2 = Alarm(
-            isWorkdayAlarm = true,
+            isSpecialAlarm = true,
             specialAlarmMode = SpecialAlarmMode.FIRST_WORKDAY_ONLY
         )
         assertEquals(SpecialAlarmMode.FIRST_WORKDAY_ONLY, alarm2.specialAlarmMode)
 
         val alarm3 = Alarm(
-            isWorkdayAlarm = true,
+            isSpecialAlarm = true,
             specialAlarmMode = SpecialAlarmMode.ALL_HOLIDAYS
         )
         assertEquals(SpecialAlarmMode.ALL_HOLIDAYS, alarm3.specialAlarmMode)

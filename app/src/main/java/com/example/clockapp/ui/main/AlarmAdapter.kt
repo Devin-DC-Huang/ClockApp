@@ -58,7 +58,7 @@ class AlarmAdapter(
 
             // 根据闹钟类型显示不同的图标
             ivTypeIcon.setImageResource(when {
-                alarm.isWorkdayAlarm -> R.drawable.ic_work_outline
+                alarm.isSpecialAlarm -> R.drawable.ic_work_outline
                 alarm.isRegularAlarm -> R.drawable.ic_repeat
                 else -> R.drawable.ic_calendar_today
             })

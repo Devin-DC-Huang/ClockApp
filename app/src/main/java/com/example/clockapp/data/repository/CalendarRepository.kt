@@ -4,7 +4,10 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
 import com.example.clockapp.data.api.RetrofitClient
+import com.example.clockapp.data.db.AlarmDatabase
+import com.example.clockapp.data.model.Alarm
 import com.example.clockapp.data.model.CalendarData
+import com.example.clockapp.data.model.SpecialAlarmMode
 import com.example.clockapp.data.security.SecurityConfig
 import com.example.clockapp.data.validator.HolidayDataValidator
 import com.google.gson.Gson
@@ -17,7 +20,7 @@ import java.time.ZoneId
  * Calendar data repository using java.time API
  * Manages local cache and network fetch for holidays
  */
-class CalendarRepository(context: Context) {
+class CalendarRepository(private val context: Context) {
     private val prefs: SharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
     // Use secure Gson for parsing untrusted data
     private val gson: Gson = SecurityConfig.createSecureGson()
@@ -260,6 +263,9 @@ class CalendarRepository(context: Context) {
             val calendarData = getCalendarData(nextYear)
             Log.d(TAG, "Successfully prefetched data for year $nextYear")
 
+            // Append next year's dates to all special alarms
+            appendNextYearDatesToSpecialAlarms(calendarData, nextYear)
+
             // Mark as successfully prefetched today
             prefs.edit()
                 .putInt(KEY_NEXT_YEAR_PREFETCH_ATTEMPT + nextYear, currentDay)
@@ -281,6 +287,122 @@ class CalendarRepository(context: Context) {
                 .apply()
             false
         }
+    }
+
+    /**
+     * Append next year's dates to all special alarms
+     * Uses Alarm.year field as deduplication marker
+     * @param calendarData Calendar data for next year
+     * @param nextYear The year being appended
+     */
+    private suspend fun appendNextYearDatesToSpecialAlarms(calendarData: CalendarData, nextYear: Int) {
+        try {
+            val alarmDao = AlarmDatabase.getDatabase(context).alarmDao()
+            val specialAlarms = alarmDao.getAllSpecialAlarms()
+
+            Log.d(TAG, "Found ${specialAlarms.size} special alarms to process for year $nextYear")
+
+            var updatedCount = 0
+            specialAlarms.forEach { alarm ->
+                // Deduplication check: skip if already appended this year
+                val alarmYear = alarm.year
+                if (alarmYear != null && alarmYear >= nextYear) {
+                    Log.d(TAG, "Skipping alarm ${alarm.id}, already has year $alarmYear")
+                    return@forEach
+                }
+
+                // Calculate dates for next year based on special alarm mode
+                val newDates = calculateDatesForMode(calendarData, alarm.specialAlarmMode)
+
+                // Merge and deduplicate dates
+                val mergedDates = (alarm.dates + newDates).distinct().sorted()
+
+                // Update alarm with new dates and year marker
+                val updatedAlarm = alarm.copy(
+                    dates = mergedDates,
+                    year = nextYear
+                )
+
+                alarmDao.updateAlarm(updatedAlarm)
+                updatedCount++
+                Log.d(TAG, "Updated alarm ${alarm.id}: appended ${newDates.size} dates for year $nextYear, total dates: ${mergedDates.size}")
+            }
+
+            Log.d(TAG, "Successfully updated $updatedCount special alarms with dates for year $nextYear")
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to append dates to special alarms", e)
+            // Don't throw - prefetch should still succeed even if alarm update fails
+        }
+    }
+
+    /**
+     * Calculate dates for a specific alarm mode
+     * @param calendarData Calendar data containing holidays and workdays
+     * @param mode Special alarm mode
+     * @return List of dates for the year
+     */
+    private fun calculateDatesForMode(calendarData: CalendarData, mode: SpecialAlarmMode): List<LocalDate> {
+        return when (mode) {
+            SpecialAlarmMode.ALL_HOLIDAYS -> calculateAllHolidays(calendarData)
+            SpecialAlarmMode.FIRST_WORKDAY_ONLY -> calculateFirstWorkdays(calendarData)
+            SpecialAlarmMode.ALL_WORKDAYS -> calendarData.getAllWorkDates()
+        }
+    }
+
+    /**
+     * Calculate all holidays (official holidays + weekends, excluding workday adjustments)
+     */
+    private fun calculateAllHolidays(calendarData: CalendarData): List<LocalDate> {
+        val dates = mutableListOf<LocalDate>()
+        val startDate = LocalDate.of(calendarData.year, 1, 1)
+        val endDate = LocalDate.of(calendarData.year, 12, 31)
+
+        var currentDate = startDate
+        while (!currentDate.isAfter(endDate)) {
+            val dayOfWeek = currentDate.dayOfWeek.value
+            val isLegalHoliday = calendarData.holidays.any { it == currentDate }
+            val isWeekend = dayOfWeek in listOf(6, 7)
+            val isWorkdayAdjustment = calendarData.workdays.any { it == currentDate }
+
+            if ((isLegalHoliday || isWeekend) && !isWorkdayAdjustment) {
+                dates.add(currentDate)
+            }
+            currentDate = currentDate.plusDays(1)
+        }
+        return dates
+    }
+
+    /**
+     * Calculate first workdays after holidays (including weekends)
+     */
+    private fun calculateFirstWorkdays(calendarData: CalendarData): List<LocalDate> {
+        val dates = mutableListOf<LocalDate>()
+        val startDate = LocalDate.of(calendarData.year, 1, 1)
+        val endDate = LocalDate.of(calendarData.year, 12, 31)
+
+        var currentDate = startDate
+        while (!currentDate.isAfter(endDate)) {
+            val dayOfWeek = currentDate.dayOfWeek.value
+            val isLegalHoliday = calendarData.holidays.any { it == currentDate }
+            val isWeekend = dayOfWeek in listOf(6, 7)
+            val isWorkdayAdjustment = calendarData.workdays.any { it == currentDate }
+            val isWorkday = (!isLegalHoliday && !isWeekend) || isWorkdayAdjustment
+
+            if (isWorkday) {
+                val prevDate = currentDate.minusDays(1)
+                val prevDayOfWeek = prevDate.dayOfWeek.value
+                val isPrevLegalHoliday = calendarData.holidays.any { it == prevDate }
+                val isPrevWeekend = prevDayOfWeek in listOf(6, 7)
+                val isPrevWorkdayAdjustment = calendarData.workdays.any { it == prevDate }
+                val isPrevDayHoliday = (isPrevLegalHoliday || isPrevWeekend) && !isPrevWorkdayAdjustment
+
+                if (isPrevDayHoliday) {
+                    dates.add(currentDate)
+                }
+            }
+            currentDate = currentDate.plusDays(1)
+        }
+        return dates
     }
 
     /**

@@ -42,4 +42,7 @@ interface AlarmDao {
 
     @Query("SELECT * FROM alarms WHERE isEnabled = 1")
     suspend fun getEnabledAlarms(): List<Alarm>
+
+    @Query("SELECT * FROM alarms WHERE isSpecialAlarm = 1")
+    suspend fun getAllSpecialAlarms(): List<Alarm>
 }
