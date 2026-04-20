@@ -5,10 +5,17 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.LinearLayout
+import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
+import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipGroup
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -50,6 +57,27 @@ class AlarmDetailActivity : AppCompatActivity() {
     private lateinit var rbAllWorkdaysMode: android.widget.RadioButton
     private lateinit var rbFirstWorkdayMode: android.widget.RadioButton
     private lateinit var rbAllHolidaysMode: android.widget.RadioButton
+
+    // Quick date selection
+    private lateinit var layoutQuickSelectHeader: LinearLayout
+    private lateinit var layoutQuickSelectContent: LinearLayout
+    private lateinit var ivExpandIcon: android.widget.ImageView
+    private lateinit var spinnerYear: Spinner
+    private lateinit var chipGroupWeekDays: ChipGroup
+    private lateinit var chipMonday: Chip
+    private lateinit var chipTuesday: Chip
+    private lateinit var chipWednesday: Chip
+    private lateinit var chipThursday: Chip
+    private lateinit var chipFriday: Chip
+    private lateinit var chipSaturday: Chip
+    private lateinit var chipSunday: Chip
+    private lateinit var cbSkipHolidays: CheckBox
+    private lateinit var tvSkipHolidaysHint: TextView
+    private lateinit var btnApplyQuickSelect: MaterialButton
+    private var selectedYear: Int = LocalDate.now().year
+    private var availableYears: List<Int> = emptyList()
+    private var yearToCalendarData: MutableMap<Int, CalendarData?> = mutableMapOf()
+    private var isQuickSelectExpanded: Boolean = false
 
     private var alarmId: String? = null
     private var isSpecialAlarm: Boolean = false
@@ -151,6 +179,23 @@ class AlarmDetailActivity : AppCompatActivity() {
         rbFirstWorkdayMode = findViewById(R.id.rbFirstWorkdayMode)
         rbAllHolidaysMode = findViewById(R.id.rbAllHolidaysMode)
 
+        // Quick date selection
+        layoutQuickSelectHeader = findViewById(R.id.layoutQuickSelectHeader)
+        layoutQuickSelectContent = findViewById(R.id.layoutQuickSelectContent)
+        ivExpandIcon = findViewById(R.id.ivExpandIcon)
+        spinnerYear = findViewById(R.id.spinnerYear)
+        chipGroupWeekDays = findViewById(R.id.chipGroupWeekDays)
+        chipMonday = findViewById(R.id.chipMonday)
+        chipTuesday = findViewById(R.id.chipTuesday)
+        chipWednesday = findViewById(R.id.chipWednesday)
+        chipThursday = findViewById(R.id.chipThursday)
+        chipFriday = findViewById(R.id.chipFriday)
+        chipSaturday = findViewById(R.id.chipSaturday)
+        chipSunday = findViewById(R.id.chipSunday)
+        cbSkipHolidays = findViewById(R.id.cbSkipHolidays)
+        tvSkipHolidaysHint = findViewById(R.id.tvSkipHolidaysHint)
+        btnApplyQuickSelect = findViewById(R.id.btnApplyQuickSelect)
+
         // Time input listeners with validation
         setupTimeInput(etHour, 0, 23) { hour ->
             etHour.setText(hour.toString().padStart(2, '0'))
@@ -192,6 +237,167 @@ class AlarmDetailActivity : AppCompatActivity() {
 
         switchEnabled.isChecked = true
         switchVibrate.isChecked = true
+
+        // Setup quick date selection (only for specific date alarm)
+        if (!isSpecialAlarm && !isRegularAlarm) {
+            setupQuickDateSelection()
+        }
+    }
+
+    /**
+     * Setup quick date selection UI and logic
+     */
+    private fun setupQuickDateSelection() {
+        // Setup expand/collapse
+        layoutQuickSelectHeader.setOnClickListener {
+            toggleQuickSelectExpansion()
+        }
+
+        // Initialize year spinner
+        val currentYear = LocalDate.now().year
+        availableYears = (currentYear..currentYear + 10).toList()
+        val yearAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, availableYears)
+        yearAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinnerYear.adapter = yearAdapter
+        spinnerYear.setSelection(0)
+
+        spinnerYear.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                selectedYear = availableYears[position]
+                checkCalendarDataForYear(selectedYear)
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
+
+        // Apply button click
+        btnApplyQuickSelect.setOnClickListener {
+            applyQuickDateSelection()
+        }
+
+        // Load calendar data for available years
+        loadCalendarDataForYears()
+    }
+
+    /**
+     * Toggle quick select section expansion
+     */
+    private fun toggleQuickSelectExpansion() {
+        isQuickSelectExpanded = !isQuickSelectExpanded
+        if (isQuickSelectExpanded) {
+            layoutQuickSelectContent.visibility = View.VISIBLE
+            ivExpandIcon.rotation = 90f
+        } else {
+            layoutQuickSelectContent.visibility = View.GONE
+            ivExpandIcon.rotation = 0f
+        }
+    }
+
+    /**
+     * Load calendar data for all available years
+     */
+    private fun loadCalendarDataForYears() {
+        lifecycleScope.launch {
+            try {
+                val repository = CalendarRepository.getInstance(this@AlarmDetailActivity)
+                availableYears.forEach { year ->
+                    try {
+                        // Use hasYearData to check if valid data exists before fetching
+                        if (repository.hasYearData(year)) {
+                            val data = repository.getCalendarData(year)
+                            yearToCalendarData[year] = data
+                        } else {
+                            yearToCalendarData[year] = null
+                        }
+                    } catch (e: Exception) {
+                        yearToCalendarData[year] = null
+                    }
+                }
+                // Update UI for current selection
+                checkCalendarDataForYear(selectedYear)
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to load calendar data", e)
+            }
+        }
+    }
+
+    /**
+     * Check if valid calendar data exists for the selected year and update UI
+     * Data is considered invalid if it's null or contains no holidays and no workdays
+     */
+    private fun checkCalendarDataForYear(year: Int) {
+        val calendarData = yearToCalendarData[year]
+        // Data is valid only if it exists and has at least some holidays or workdays
+        val hasValidData = calendarData != null && 
+            (calendarData.holidays.isNotEmpty() || calendarData.workdays.isNotEmpty())
+        
+        cbSkipHolidays.isEnabled = hasValidData
+        if (!hasValidData) {
+            cbSkipHolidays.isChecked = false
+            tvSkipHolidaysHint.visibility = View.VISIBLE
+        } else {
+            tvSkipHolidaysHint.visibility = View.GONE
+        }
+    }
+
+    /**
+     * Get selected week days from chips
+     */
+    private fun getSelectedWeekDays(): List<Int> {
+        val selectedDays = mutableListOf<Int>()
+        if (chipMonday.isChecked) selectedDays.add(1)
+        if (chipTuesday.isChecked) selectedDays.add(2)
+        if (chipWednesday.isChecked) selectedDays.add(3)
+        if (chipThursday.isChecked) selectedDays.add(4)
+        if (chipFriday.isChecked) selectedDays.add(5)
+        if (chipSaturday.isChecked) selectedDays.add(6)
+        if (chipSunday.isChecked) selectedDays.add(7)
+        return selectedDays
+    }
+
+    /**
+     * Apply quick date selection
+     * Clears existing dates and generates new ones based on selection
+     */
+    private fun applyQuickDateSelection() {
+        val weekDays = getSelectedWeekDays()
+        if (weekDays.isEmpty()) {
+            Toast.makeText(this, "请至少选择一个星期", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        // Generate dates for selected year and week days
+        val generatedDates = mutableListOf<LocalDate>()
+        val startDate = LocalDate.of(selectedYear, 1, 1)
+        val endDate = LocalDate.of(selectedYear, 12, 31)
+
+        var date = startDate
+        while (!date.isAfter(endDate)) {
+            val dayOfWeek = date.dayOfWeek.value // 1=Monday, 7=Sunday
+            if (dayOfWeek in weekDays) {
+                generatedDates.add(date)
+            }
+            date = date.plusDays(1)
+        }
+
+        // Skip holidays if checked and data available
+        val calendarData = yearToCalendarData[selectedYear]
+        val finalDates = if (cbSkipHolidays.isChecked && calendarData != null) {
+            val holidays = calendarData.holidays.toSet()
+            generatedDates.filter { it !in holidays }
+        } else {
+            generatedDates
+        }
+
+        // Clear existing dates and set new ones
+        selectedDates.clear()
+        selectedDates.addAll(finalDates)
+        selectedDates.sort()
+
+        updateDateDisplay()
+
+        val skipInfo = if (cbSkipHolidays.isChecked && calendarData != null) "（已跳过节假日）" else ""
+        Toast.makeText(this, "已生成 ${finalDates.size} 个日期$skipInfo", Toast.LENGTH_SHORT).show()
     }
     
     /**

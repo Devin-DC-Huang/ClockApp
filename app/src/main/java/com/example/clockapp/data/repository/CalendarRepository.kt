@@ -93,10 +93,17 @@ class CalendarRepository(private val context: Context) {
                 }
 
                 val days = body?.days
+                
+                // Check if days array is null or empty
+                if (days.isNullOrEmpty()) {
+                    Log.w(TAG, "Year $year data is empty (no holidays published yet)")
+                    throw WorkdayDataException("$year 年节假日数据尚未发布，请使用普通闹钟或等待数据更新")
+                }
+                
                 val holidays = mutableListOf<LocalDate>()
                 val workdays = mutableListOf<LocalDate>()
 
-                days?.forEach { day ->
+                days.forEach { day ->
                     Log.d(TAG, "Processing: ${day.name} -> date=${day.date}, isOffDay=${day.isOffDay}")
                     val date = parseDate(day.date)
                     if (date != null) {
@@ -111,6 +118,12 @@ class CalendarRepository(private val context: Context) {
                 }
 
                 Log.d(TAG, "Parsed: ${holidays.size} holidays, ${workdays.size} workdays")
+
+                // Check if parsed data is empty
+                if (holidays.isEmpty() && workdays.isEmpty()) {
+                    Log.w(TAG, "Year $year parsed data is empty")
+                    throw WorkdayDataException("$year 年节假日数据尚未发布，请使用普通闹钟或等待数据更新")
+                }
 
                 val calendarData = CalendarData(year, holidays, workdays)
 
@@ -160,6 +173,7 @@ class CalendarRepository(private val context: Context) {
 
     /**
      * Get from local storage
+     * Returns null if no data exists or data is empty (no holidays and no workdays)
      */
     private fun getFromLocal(year: Int): CalendarData? {
         val json = prefs.getString(KEY_DATA_PREFIX + year, null) ?: return null
@@ -168,14 +182,24 @@ class CalendarRepository(private val context: Context) {
             val type = object : TypeToken<Map<String, List<Long>>>() {}.type
             val data: Map<String, List<Long>> = gson.fromJson(json, type)
 
+            val holidays = data["holidays"]?.mapNotNull { 
+                com.example.clockapp.data.db.LocalDateListConverter.millisToLocalDate(it) 
+            } ?: emptyList()
+            
+            val workdays = data["workdays"]?.mapNotNull { 
+                com.example.clockapp.data.db.LocalDateListConverter.millisToLocalDate(it) 
+            } ?: emptyList()
+
+            // Consider data invalid if both holidays and workdays are empty
+            if (holidays.isEmpty() && workdays.isEmpty()) {
+                Log.d(TAG, "Local data for year $year is empty (no holidays or workdays)")
+                return null
+            }
+
             CalendarData(
                 year = year,
-                holidays = data["holidays"]?.mapNotNull { 
-                    com.example.clockapp.data.db.LocalDateListConverter.millisToLocalDate(it) 
-                } ?: emptyList(),
-                workdays = data["workdays"]?.mapNotNull { 
-                    com.example.clockapp.data.db.LocalDateListConverter.millisToLocalDate(it) 
-                } ?: emptyList()
+                holidays = holidays,
+                workdays = workdays
             )
         } catch (e: Exception) {
             null
@@ -198,10 +222,11 @@ class CalendarRepository(private val context: Context) {
     }
 
     /**
-     * Check if data exists for specified year
+     * Check if valid data exists for specified year
+     * Returns false if no data or data is empty (no holidays and no workdays)
      */
     fun hasYearData(year: Int): Boolean {
-        return prefs.contains(KEY_DATA_PREFIX + year)
+        return getFromLocal(year) != null
     }
 
     /**
