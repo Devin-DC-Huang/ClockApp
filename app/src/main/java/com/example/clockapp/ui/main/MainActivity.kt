@@ -372,18 +372,6 @@ class MainActivity : AppCompatActivity() {
             adapter.submitList(alarms)
             updateEmptyView(alarms.isEmpty())
         }
-
-        // Load calendar data for workday alarm display
-        lifecycleScope.launch {
-            try {
-                val repository = CalendarRepository.getInstance(this@MainActivity)
-                val year = java.time.LocalDate.now().year
-                val calendarData = repository.getCalendarData(year)
-                adapter.updateCalendarData(calendarData)
-            } catch (e: Exception) {
-                android.util.Log.e("MainActivity", "Failed to load calendar data", e)
-            }
-        }
     }
 
     private fun updateEmptyView(isEmpty: Boolean) {

@@ -85,7 +85,6 @@ class AlarmDetailActivity : AppCompatActivity() {
     private var selectedDates: MutableList<LocalDate> = mutableListOf()
     private var repeatDays: MutableList<Int> = mutableListOf()
     private var specialAlarmMode: SpecialAlarmMode = SpecialAlarmMode.ALL_WORKDAYS
-    private var calendarData: com.example.clockapp.data.model.CalendarData? = null
 
     private var existingAlarm: Alarm? = null
 
@@ -601,7 +600,6 @@ class AlarmDetailActivity : AppCompatActivity() {
                 val repository = CalendarRepository.getInstance(this@AlarmDetailActivity)
                 val year = LocalDate.now().year
                 val data = repository.getCalendarData(year)
-                calendarData = data
 
                 val dialog = HolidayCalendarDialog(
                     this@AlarmDetailActivity,
@@ -798,8 +796,14 @@ class AlarmDetailActivity : AppCompatActivity() {
             try {
                 val dates = when {
                     isSpecialAlarm -> {
-                        // Workday alarm: get workday dates
-                        loadWorkdayDates()
+                        val existing = existingAlarm
+                        if (alarmId != null && existing != null) {
+                            // Edit mode: mode is read-only in UI, keep all existing dates
+                            existing.dates
+                        } else {
+                            // Create mode: calculate workday dates
+                            loadWorkdayDates()
+                        }
                     }
                     isRegularAlarm -> {
                         // Regular alarm: no specific dates needed
@@ -836,7 +840,9 @@ class AlarmDetailActivity : AppCompatActivity() {
                     vibrate = switchVibrate.isChecked,
                     isSpecialAlarm = isSpecialAlarm,
                     isRegularAlarm = isRegularAlarm,
-                    year = if (isSpecialAlarm) LocalDate.now().year else null,
+                    year = if (isSpecialAlarm) {
+                        existingAlarm?.year ?: LocalDate.now().year
+                    } else null,
                     snoozeEnabled = existingAlarm?.snoozeEnabled ?: true,
                     snoozeMinutes = existingAlarm?.snoozeMinutes ?: 5,
                     repeatDays = repeatDays.toList(),

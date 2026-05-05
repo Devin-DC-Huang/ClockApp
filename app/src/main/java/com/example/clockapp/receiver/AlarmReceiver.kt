@@ -5,7 +5,11 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.PowerManager
+import android.util.Log
+import com.example.clockapp.data.db.AlarmDatabase
 import com.example.clockapp.service.AlarmService
+import kotlinx.coroutines.runBlocking
+import java.time.LocalDate
 
 /**
  * Alarm broadcast receiver
@@ -23,6 +27,28 @@ class AlarmReceiver : BroadcastReceiver() {
         val snoozeMinutes = intent.getIntExtra(EXTRA_SNOOZE_MINUTES, 5)
 
         if (alarmId == -1) return
+
+        // For special alarms: verify today is in pre-calculated dates
+        if (alarmUuid != null && !isSnooze) {
+            val shouldRing = runBlocking {
+                try {
+                    val alarm = AlarmDatabase.getDatabase(context).alarmDao().getAlarmById(alarmUuid)
+                    if (alarm?.isSpecialAlarm == true) {
+                        val today = LocalDate.now()
+                        alarm.dates.contains(today)
+                    } else {
+                        true
+                    }
+                } catch (e: Exception) {
+                    Log.e(TAG, "Failed to verify special alarm dates", e)
+                    true // Fail-safe: ring on error
+                }
+            }
+            if (!shouldRing) {
+                Log.d(TAG, "Skipping special alarm $alarmId, today not in pre-calculated dates")
+                return
+            }
+        }
 
         // Acquire wake lock to ensure device stays awake (点亮屏幕)
         val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager
@@ -63,6 +89,7 @@ class AlarmReceiver : BroadcastReceiver() {
     }
 
     companion object {
+        private const val TAG = "AlarmReceiver"
         const val EXTRA_ALARM_ID = "alarm_id"
         const val EXTRA_ALARM_TITLE = "alarm_title"
         const val EXTRA_ALARM_UUID = "alarm_uuid"

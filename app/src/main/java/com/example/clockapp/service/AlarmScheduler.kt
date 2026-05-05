@@ -7,11 +7,8 @@ import android.content.Intent
 import android.os.Build
 import android.util.Log
 import com.example.clockapp.data.model.Alarm
-import com.example.clockapp.data.model.SpecialAlarmMode
-import com.example.clockapp.data.repository.CalendarRepository
 import com.example.clockapp.receiver.AlarmReceiver
 import java.time.Instant
-import java.time.LocalDate
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 
@@ -45,15 +42,7 @@ object AlarmScheduler {
             return false
         }
 
-        // Get calendar data for holiday checking if needed (for special alarm with first workday mode or all holidays mode)
-        val calendarData = if (alarm.isSpecialAlarm && alarm.specialAlarmMode != SpecialAlarmMode.ALL_WORKDAYS) {
-            val year = LocalDate.now().year
-            CalendarRepository.getInstance(context).getCalendarDataSync(year)
-        } else {
-            null
-        }
-
-        val nextRingTime = alarm.calculateNextRingTime(calendarData)
+        val nextRingTime = alarm.calculateNextRingTime()
         if (nextRingTime == null) {
             Log.d("AlarmScheduler", "Alarm ${alarm.id} has no next ring time, not scheduling")
             return false

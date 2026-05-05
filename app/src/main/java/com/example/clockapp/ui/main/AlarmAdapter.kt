@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.clockapp.R
 import com.example.clockapp.data.model.Alarm
-import com.example.clockapp.data.model.CalendarData
 
 /**
  * Alarm list adapter
@@ -20,17 +19,8 @@ class AlarmAdapter(
     private val onItemClick: (Alarm) -> Unit,
     private val onToggleChanged: (Alarm, Boolean) -> Unit,
     private val onDeleteClick: (Alarm) -> Unit,
-    private val onCopyClick: (Alarm) -> Unit,
-    private var calendarData: CalendarData? = null
+    private val onCopyClick: (Alarm) -> Unit
 ) : ListAdapter<Alarm, AlarmAdapter.AlarmViewHolder>(AlarmDiffCallback()) {
-
-    /**
-     * Update calendar data for workday alarm calculation
-     */
-    fun updateCalendarData(data: CalendarData?) {
-        calendarData = data
-        notifyDataSetChanged()
-    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AlarmViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -39,7 +29,7 @@ class AlarmAdapter(
     }
 
     override fun onBindViewHolder(holder: AlarmViewHolder, position: Int) {
-        holder.bind(getItem(position), calendarData)
+        holder.bind(getItem(position))
     }
 
     inner class AlarmViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -51,10 +41,10 @@ class AlarmAdapter(
         private val ivCopy: ImageView = itemView.findViewById(R.id.ivCopy)
         private val ivTypeIcon: ImageView = itemView.findViewById(R.id.ivTypeIcon)
 
-        fun bind(alarm: Alarm, calendarData: CalendarData?) {
+        fun bind(alarm: Alarm) {
             tvTime.text = alarm.getTimeString()
             tvTitle.text = alarm.title
-            tvNextRing.text = alarm.getNextRingDescription(calendarData)
+            tvNextRing.text = alarm.getNextRingDescription()
 
             // 根据闹钟类型显示不同的图标
             ivTypeIcon.setImageResource(when {

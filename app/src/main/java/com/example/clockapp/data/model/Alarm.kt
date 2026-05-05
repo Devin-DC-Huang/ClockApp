@@ -129,102 +129,22 @@ data class Alarm(
      * Calculate next ring time
      * @return LocalDateTime of next ring time, or null if no upcoming alarm
      */
-    fun calculateNextRingTime(calendarData: CalendarData? = null): LocalDateTime? {
+    fun calculateNextRingTime(): LocalDateTime? {
         if (!isEnabled) return null
 
         val now = LocalDateTime.now(ZoneId.systemDefault())
         val today = now.toLocalDate()
         val currentDayOfWeek = today.dayOfWeek.value  // 1=Monday, 7=Sunday
 
-        // Special alarm: supports three modes
-        // ALL_WORKDAYS: All workdays (Mon-Fri, skip holidays) - default
-        // FIRST_WORKDAY_ONLY: First workday after holiday only (including weekends)
-        // ALL_HOLIDAYS: All holidays (including weekends)
+        // Special alarm: uses pre-calculated dates stored in alarm.dates
         if (isSpecialAlarm) {
-            val currentHour = now.hour
-            val currentMinute = now.minute
+            if (dates.isEmpty()) return null
 
-            // Mode ALL_HOLIDAYS: ring on all holidays including weekends
-            if (specialAlarmMode == SpecialAlarmMode.ALL_HOLIDAYS) {
-                if (calendarData == null) return null
-
-                for (daysOffset in 0..13) {
-                    val ringDate = today.plusDays(daysOffset.toLong())
-                    val ringDayOfWeek = ringDate.dayOfWeek.value  // 1=Monday, 7=Sunday
-
-                    // Check if this is a holiday (official holiday or weekend)
-                    val isHoliday = calendarData.holidays.any { it == ringDate } || ringDayOfWeek in listOf(6, 7)
-
-                    if (isHoliday) {
-                        val ringTime = LocalDateTime.of(ringDate, LocalTime.of(hour, minute))
-
-                        if (daysOffset == 0) {
-                            if (isTimeAfterNow(hour, minute, currentHour, currentMinute)) {
-                                return ringTime
-                            }
-                        } else {
-                            return ringTime
-                        }
-                    }
-                }
-                return null
-            }
-
-            // Mode FIRST_WORKDAY_ONLY: ring on the first workday after holidays (including weekends)
-            if (specialAlarmMode == SpecialAlarmMode.FIRST_WORKDAY_ONLY) {
-                if (calendarData == null) return null
-
-                for (daysOffset in 0..13) {
-                    val ringDate = today.plusDays(daysOffset.toLong())
-                    val ringDayOfWeek = ringDate.dayOfWeek.value  // 1=Monday, 7=Sunday
-
-                    // Skip holidays and weekends (Saturday=6, Sunday=7)
-                    if (calendarData.holidays.any { it == ringDate } || ringDayOfWeek in listOf(6, 7)) {
-                        continue
-                    }
-
-                    // Check if previous day was a "holiday" (including weekends)
-                    val prevDate = ringDate.minusDays(1)
-                    val prevDayOfWeek = prevDate.dayOfWeek.value
-                    val isPrevDayHoliday = calendarData.holidays.any { it == prevDate } || prevDayOfWeek in listOf(6, 7)
-
-                    if (isPrevDayHoliday) {
-                        val ringTime = LocalDateTime.of(ringDate, LocalTime.of(hour, minute))
-
-                        if (daysOffset == 0) {
-                            if (isTimeAfterNow(hour, minute, currentHour, currentMinute)) {
-                                return ringTime
-                            }
-                        } else {
-                            return ringTime
-                        }
-                    }
-                }
-                return null
-            }
-
-            // Mode 0: All workdays (Mon-Fri), skip holidays - default mode
-            // Workdays are Monday(1) to Friday(5)
-            val workdays = listOf(1, 2, 3, 4, 5)
-            for (daysOffset in 0..13) {
-                val checkDay = ((currentDayOfWeek - 1 + daysOffset) % 7) + 1
-                if (checkDay in workdays) {
-                    val ringDate = today.plusDays(daysOffset.toLong())
-                    
-                    // Skip holidays
-                    if (calendarData?.holidays?.any { it == ringDate } == true) {
-                        continue
-                    }
-
-                    val ringTime = LocalDateTime.of(ringDate, LocalTime.of(hour, minute))
-
-                    if (daysOffset == 0) {
-                        if (isTimeAfterNow(hour, minute, currentHour, currentMinute)) {
-                            return ringTime
-                        }
-                    } else {
-                        return ringTime
-                    }
+            val sortedDates = dates.sorted()
+            for (date in sortedDates) {
+                val ringTime = LocalDateTime.of(date, LocalTime.of(hour, minute))
+                if (ringTime.isAfter(now)) {
+                    return ringTime
                 }
             }
             return null
@@ -260,10 +180,10 @@ data class Alarm(
     /**
      * Get next ring time description
      */
-    fun getNextRingDescription(calendarData: CalendarData? = null): String {
+    fun getNextRingDescription(): String {
         if (!isEnabled) return "Disabled"
 
-        val nextTime = calculateNextRingTime(calendarData)
+        val nextTime = calculateNextRingTime()
         if (nextTime == null) {
             if (dates.isNotEmpty()) {
                 val lastDate = dates.maxOrNull()

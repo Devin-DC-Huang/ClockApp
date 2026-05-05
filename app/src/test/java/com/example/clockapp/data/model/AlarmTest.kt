@@ -973,7 +973,7 @@ class AlarmTest {
     }
 
     @Test
-    fun `workday alarm first workday after holiday mode - requires calendar data`() {
+    fun `special alarm first workday mode returns null when dates is empty`() {
         val alarm = Alarm(
             isEnabled = true,
             hour = 8,
@@ -981,14 +981,14 @@ class AlarmTest {
             isSpecialAlarm = true,
             specialAlarmMode = SpecialAlarmMode.FIRST_WORKDAY_ONLY
         )
-        
-        // Without calendar data, should return null
+
+        // Without pre-calculated dates, should return null
         val nextTime = alarm.calculateNextRingTime()
-        assertNull("First workday mode requires calendar data", nextTime)
+        assertNull("First workday mode should return null when dates is empty", nextTime)
     }
 
     @Test
-    fun `workday alarm all holidays mode - requires calendar data`() {
+    fun `special alarm all holidays mode returns null when dates is empty`() {
         val alarm = Alarm(
             isEnabled = true,
             hour = 8,
@@ -996,10 +996,10 @@ class AlarmTest {
             isSpecialAlarm = true,
             specialAlarmMode = SpecialAlarmMode.ALL_HOLIDAYS
         )
-        
-        // Without calendar data, should return null
+
+        // Without pre-calculated dates, should return null
         val nextTime = alarm.calculateNextRingTime()
-        assertNull("All holidays mode requires calendar data", nextTime)
+        assertNull("All holidays mode should return null when dates is empty", nextTime)
     }
 
     // ==================== Alarm Copy Tests ====================
@@ -1160,53 +1160,37 @@ class AlarmTest {
     }
 
     @Test
-    fun `workday alarm all holidays mode with calendar data rings on weekend`() {
-        // Create calendar data with no official holidays
-        val calendarData = CalendarData(
-            year = LocalDate.now().year,
-            holidays = emptyList(),
-            workdays = emptyList()
-        )
-        
+    fun `special alarm all holidays mode rings on pre-calculated weekend date`() {
+        val tomorrow = LocalDate.now().plusDays(1)
         val alarm = Alarm(
             isEnabled = true,
             hour = 8,
             minute = 0,
             isSpecialAlarm = true,
-            specialAlarmMode = SpecialAlarmMode.ALL_HOLIDAYS
+            specialAlarmMode = SpecialAlarmMode.ALL_HOLIDAYS,
+            dates = listOf(tomorrow)
         )
-        
-        val nextTime = alarm.calculateNextRingTime(calendarData)
+
+        val nextTime = alarm.calculateNextRingTime()
         assertNotNull(nextTime)
-        
-        // Should ring on Saturday (6) or Sunday (7)
-        val dayOfWeek = nextTime!!.dayOfWeek.value
-        assertTrue("Expected weekend but got day $dayOfWeek", dayOfWeek in listOf(6, 7))
+        assertEquals(tomorrow, nextTime!!.toLocalDate())
     }
 
     @Test
-    fun `workday alarm first workday mode with calendar data finds first workday after weekend`() {
-        // Create calendar data with no official holidays
-        val calendarData = CalendarData(
-            year = LocalDate.now().year,
-            holidays = emptyList(),
-            workdays = emptyList()
-        )
-        
+    fun `special alarm first workday mode finds pre-calculated workday date`() {
+        val tomorrow = LocalDate.now().plusDays(1)
         val alarm = Alarm(
             isEnabled = true,
             hour = 8,
             minute = 0,
             isSpecialAlarm = true,
-            specialAlarmMode = SpecialAlarmMode.FIRST_WORKDAY_ONLY
+            specialAlarmMode = SpecialAlarmMode.FIRST_WORKDAY_ONLY,
+            dates = listOf(tomorrow)
         )
-        
-        val nextTime = alarm.calculateNextRingTime(calendarData)
+
+        val nextTime = alarm.calculateNextRingTime()
         assertNotNull(nextTime)
-        
-        // Should find a weekday (Mon-Fri)
-        val dayOfWeek = nextTime!!.dayOfWeek.value
-        assertTrue("Expected weekday but got day $dayOfWeek", dayOfWeek in 1..5)
+        assertEquals(tomorrow, nextTime!!.toLocalDate())
     }
 
     @Test
