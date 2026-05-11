@@ -246,14 +246,18 @@ class RingActivity : AppCompatActivity() {
                 }
                 // 通知服务处理队列中的下一个闹钟
                 AlarmService.stopCurrentAlarm()
+                
+                // Refresh main activity by restarting it (equivalent to killing and restarting the app)
+                val intent = android.content.Intent(this@RingActivity, com.example.clockapp.ui.main.MainActivity::class.java)
+                intent.flags = android.content.Intent.FLAG_ACTIVITY_NEW_TASK or android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+                
                 finish()
             }
             return
         }
 
-        // 通知服务处理队列中的下一个闹钟
-        AlarmService.stopCurrentAlarm()
-        finish()
+
     }
 
 
